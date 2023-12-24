@@ -18,7 +18,6 @@ function setTimeout(func: (...args: any[]) => void, time: number, ...args: any[]
 }
 
 function setInterval(func: (...args: any[]) => void, time: number, ...args: any[]): Interval {
-  console.log("foo");
   return new Interval(func, time, ...args);
 }
 
@@ -60,7 +59,6 @@ class Timeout {
     this.active = true;
   }
   end(): void {
-    console.log("Elapsed:", performance.now() - this.initialTime)
     window.clearInterval(this.timer);
     this.stop()
     this.endFunction(...this.args);
