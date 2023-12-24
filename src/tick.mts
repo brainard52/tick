@@ -5,17 +5,21 @@
  * clearInterval() - cancel an interval set by setInterval()
  */
 
-function tests() {
-  const myInterval1: Interval = setInterval(test1, 500);
-  const myInterval2: Interval = setInterval(test2, 500, 3);
+function clearTimeout(to_clear: Timeout) {
+  to_clear.stop();
 }
 
-function test1() {
-  console.log("test1: successful");
+function clearInterval(to_clear: Interval) {
+  to_clear.stop();
 }
 
-function test2(num: number) {
-  console.log("test2:", num * 2);
+function setTimeout(func: (...args: any[]) => void, time: number, ...args: any[]): Timeout {
+  return new Timeout(func, time, ...args);
+}
+
+function setInterval(func: (...args: any[]) => void, time: number, ...args: any[]): Interval {
+  console.log("foo");
+  return new Interval(func, time, ...args);
 }
 
 class Timeout {
@@ -76,20 +80,5 @@ class Interval extends Timeout {
   }
 }
 
-function setTimeout(func: () => void, time: number, ...args: any[]): Timeout {
-  return new Timeout(func, time, ...args);
-}
-
-function setInterval(func: () => void, time: number, ...args: any[]): Interval {
-  return new Interval(func, time, ...args);
-}
-
-function clearTimeout(to_clear: Timeout) {
-  to_clear.stop();
-}
-
-function clearInterval(to_clear: Interval) {
-  to_clear.stop();
-}
-
-window.onload = tests;
+export {setTimeout, setInterval, clearTimeout, clearInterval};
+export {}
