@@ -5,12 +5,17 @@
  * clearInterval() - cancel an interval set by setInterval()
  */
 
-function test() {
-  let myInterval: Interval = setInterval(test2, 500);
+function tests() {
+  const myInterval1: Interval = setInterval(test1, 500);
+  const myInterval2: Interval = setInterval(test2, 500, 3);
 }
 
-function test2() {
-  console.log("test successful")
+function test1() {
+  console.log("test1: successful");
+}
+
+function test2(num: number) {
+  console.log("test2:", num * 2);
 }
 
 class Timeout {
@@ -19,20 +24,22 @@ class Timeout {
   interval: number = 2;
   initialTime: number;
   prevTime: number;
-  active: boolean;
-  endFunction: Function;
+  active: boolean = false;
+  endFunction: (...args: any[]) => void;
+  args: any[];
   iteration: number = 0;
-  constructor(func: Function, time: number) {
+  constructor(func: (...args: any[]) => void, time: number, ...args: any[]) {
     this.time = time;
     this.endFunction = func;
     this.start();
+    this.args = args;
   }
   tick(): void {
     if(!this.active) {
       window.clearInterval(this.timer);
       return;
     }
-    let now = performance.now();
+    const now = performance.now();
     if(this.active && now - this.initialTime >= this.time) {
       this.end()
     } else if (this.active && now - this.initialTime < this.interval) {
@@ -52,7 +59,7 @@ class Timeout {
     console.log("Elapsed:", performance.now() - this.initialTime)
     window.clearInterval(this.timer);
     this.stop()
-    this.endFunction();
+    this.endFunction(...this.args);
   }
   stop(): void {
     this.active = false;
@@ -60,8 +67,8 @@ class Timeout {
 }
 
 class Interval extends Timeout {
-  constructor(func: Function, time: number) {
-    super(func, time);
+  constructor(func: () => void, time: number, ...args: any[]) {
+    super(func, time, ...args);
   }
   end(): void {
     super.end();
@@ -69,12 +76,12 @@ class Interval extends Timeout {
   }
 }
 
-function setTimeout(func: Function, time: number): Timeout {
-  return new Timeout(func, time);
+function setTimeout(func: () => void, time: number, ...args: any[]): Timeout {
+  return new Timeout(func, time, ...args);
 }
 
-function setInterval(func: Function, time: number): Interval {
-  return new Interval(func, time);
+function setInterval(func: () => void, time: number, ...args: any[]): Interval {
+  return new Interval(func, time, ...args);
 }
 
 function clearTimeout(to_clear: Timeout) {
@@ -85,4 +92,4 @@ function clearInterval(to_clear: Interval) {
   to_clear.stop();
 }
 
-window.onload = test;
+window.onload = tests;
